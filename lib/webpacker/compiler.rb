@@ -51,14 +51,20 @@ class Webpacker::Compiler
     end
 
     def run_webpack
-      logger.info "Compiling…"
+      logger.info "Compiling..."
 
       sterr, stdout, status = Open3.capture3(webpack_env, "bundle exec webpack")
 
       if status.success?
         logger.info "Compiled all packs in #{config.public_output_path}"
+        logger.error "#{stderr}" unless stderr.empty?
+
+        if config.webpack_compile_output?
+          logger.info stdout
+        end
       else
-        logger.error "Compilation failed:\n#{sterr}\n#{stdout}"
+        non_empty_streams = [stdout, stderr].delete_if(&:empty?)
+        logger.error "Compilation failed:\n#{non_empty_streams.join("\n\n")}"
       end
 
       status.success?

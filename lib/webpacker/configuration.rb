@@ -53,6 +53,10 @@ class Webpacker::Configuration
     root_path.join(fetch(:cache_path))
   end
 
+  def webpack_compile_output?
+    fetch(:webpack_compile_output)
+  end
+
   def extensions
     fetch(:extensions)
   end
